@@ -1,0 +1,32 @@
+public class ZombiMove : MonoBehaviour
+{
+    
+    public float speed;
+    //private Animator anim;
+    private Transform Player;
+    private Rigidbody rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = true;
+        //anim = GetComponent<Animator>();
+        Player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+    private void FixedUpdate()
+    {
+                if (true)
+                {
+                transform.LookAt(Player.transform);
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, -transform.up, out hit))
+                {
+                    
+                    Vector3 targetPosition = Vector3.ProjectOnPlane(Player.transform.position - transform.position, Vector3.up);
+                    transform.position = Vector3.MoveTowards(transform.position, transform.position + targetPosition.normalized * speed * Time.deltaTime, speed * Time.deltaTime);
+                    rb.MovePosition(transform.position + targetPosition.normalized * speed * Time.deltaTime);
+                }
+            }
+            
+    }
+} 
