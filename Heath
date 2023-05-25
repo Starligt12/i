@@ -1,0 +1,110 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
+using System.Threading;
+
+public class Health : MonoBehaviour
+{
+
+    public float maxHealth = 100;
+    public float curHealth = 0;
+    public Image Bar;
+    private float deathTimer = 1f;
+    public int tablet = 0;
+    public TextMeshProUGUI text;
+    public string bonusname;
+    public float radius = 2f;
+    public GameObject panelrestart;
+    AudioSource audiotake;
+    public AudioClip soundEffect;
+    
+
+    private void Start()
+    {
+        curHealth = maxHealth;
+        panelrestart.SetActive(false);
+        audiotake = GetComponent<AudioSource>();
+        audiotake.clip = soundEffect;
+        
+    }
+   
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Enemy")
+        {
+            curHealth -= 10;
+            Bar.fillAmount = curHealth / 100;
+            
+        }
+        if (other.gameObject.tag == "HP" && Input.GetKey(KeyCode.E))
+        {
+            //isTaken = true;
+            tablet++;
+            audiotake.Play();
+            MakeObjectInvisible(other.gameObject);
+            //Destroy(other.gameObject);
+        }
+    }
+    void MakeObjectInvisible(GameObject obj)
+    {
+        obj.SetActive(false);
+    }
+    private void Update()
+    {
+        text.text = "" + tablet;
+        if (Input.GetKeyDown(KeyCode.X) & tablet>0 & curHealth < 200f) 
+        {
+            curHealth = curHealth + 20f;
+        }
+        if (curHealth <= 10)
+        {
+            Bar.color = Color.red;
+        }
+        if (curHealth <= 0)
+        {
+            deathTimer -= Time.deltaTime;
+            if (deathTimer <= 0)
+            {
+                
+                panelrestart.SetActive(true);
+                Invoke("SampleScene", 1f);
+                RestartGame();
+                //Destroy(gameObject);
+                //PlayerPrefs.DeleteAll();
+                
+            }
+            
+        }
+        if (transform == null)
+        {
+            return;
+        }
+        
+
+    }
+    void RestartGame()
+    {
+        
+       // Destroy(gameObject);
+        //PlayerPrefs.DeleteAll();
+        // Перезапустить текущую сцену
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        EnemyDead enemys = FindObjectOfType<EnemyDead>();
+        EnemyDead.enemys = 0;
+    }
+    public void SavePlayer() 
+    {
+        SaveSystem.SavePlayer(this);
+        Debug.Log("Save");
+    }
+    public void LoadPlayer(string playerName) 
+    {
+        Save data = SaveSystem.LoadPlayer();
+        curHealth = data.curHealth;
+        tablet = data.tablet;
+
+    }
+}
