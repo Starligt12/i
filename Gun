@@ -1,0 +1,100 @@
+public class Gun : MonoBehaviour
+{
+    public float damage = 30f;
+    public float range = 100f; // дальность стрельбы
+    public float fireRate = 10f; // скорость стрельбы в выстрелах в секунду
+    public Camera fpsCam; // камера игрока
+    private float nextTimeToFire = 0f;
+    public ParticleSystem muzzleFlash;
+    public GameObject _bullet;
+    public Transform spawnbullet;
+
+    public Animator animator;
+    public GameObject muzzle;
+    public AudioSource audiorel;
+    [SerializeField] AudioClip audioreload;
+    public int currentammo = 30;
+    public int ammo = 60;
+    
+    public float shootForce;
+    public float spread;
+    [SerializeField]
+    private TextMeshProUGUI ammotext;
+    [SerializeField] AudioClip audionot;
+    public new AudioSource audio;
+    [SerializeField] AudioClip audioshoot;
+    private void Start()
+    {
+        audiorel = GetComponent<AudioSource>();
+        audiorel.clip= audioreload;
+        audio.clip = audionot;
+        audio.clip = audioshoot;
+    }
+    
+    void Update()
+    {
+       
+        if (Input.GetButton("Fire1") && Time.time >= nextTimeToFire) 
+        {
+            animator.Play("Shoot");
+            nextTimeToFire = Time.time + 1f / fireRate;
+            
+            
+            Shoot();
+        }
+        if (Input.GetButton("R") && ammo > 0)
+        {
+            audiorel.Play();
+            animator.Play("Reload_WPN");
+            Reload();
+        }
+        
+        if (Input.GetKey(KeyCode.E)) 
+        {
+            audiorel.Play();
+        }
+
+    }
+    void Shoot() 
+    {
+        audio.PlayOneShot(audioshoot);
+        muzzleFlash.Play();
+        RaycastHit hit;
+        Vector3 rayOrigin = muzzle.transform.position;
+        if (currentammo > 0) 
+        {
+            if (Physics.Raycast(rayOrigin, fpsCam.transform.forward, out hit, range))
+            {
+                Debug.Log(hit.transform.name);
+
+                target target = hit.transform.GetComponent<target>();
+
+
+                if (target != null)
+                {
+
+                    target.TakeDamage(damage);
+                }
+            }
+           
+            currentammo--;
+            ammotext.text = currentammo + "/" + ammo;
+        }
+        if(currentammo <= 0)
+        {
+            audio.Stop();
+            audio.PlayOneShot(audionot);
+            
+        }
+
+    }
+   
+    public void Reload() 
+    {
+        int reason = 30 - currentammo;
+        int result = ammo - reason;
+        ammo = result;
+        currentammo = 30;
+        ammotext.text = currentammo + "/" + ammo;
+    }
+}
