@@ -1,0 +1,24 @@
+public class EnemyDead : MonoBehaviour
+{
+    TextMeshProUGUI text;
+    public static int enemys;
+    void Start()
+    {
+        text= GetComponent<TextMeshProUGUI>();
+        
+    }
+
+    
+    void Update()
+    {
+        text.text = enemys.ToString();
+        
+        
+    }
+    
+    public void RestartGame()
+    {
+        enemys = 0; // Установить значение enemys на 0
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+}
