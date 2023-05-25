@@ -1,0 +1,15 @@
+public class Enemy : MonoBehaviour
+{
+    public float damage = 10f;
+    public float damageRate = 1f;
+    private float nextDamage = 2f;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player") && Time.time > nextDamage) 
+        {
+            other.gameObject.GetComponent<Health>().curHealth -= damage;
+            nextDamage = Time.time + damageRate;
+        }
+    }
+}
