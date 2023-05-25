@@ -1,0 +1,60 @@
+public class AmmoBox : MonoBehaviour
+{
+    public Gun addammo;
+    public float radius = 2f;
+    public Transform player;
+    AudioSource audiotake;
+    public AudioClip soundEffect;
+    public GameObject objectToSpawn;
+    public float spawnInterval = 2.0f;
+    public Transform spawnTransform;
+    private GameObject spawnedObject;
+
+    private void Start()
+    {
+        audiotake = GetComponent<AudioSource>();
+        audiotake.clip = soundEffect;
+        SpawnObject();
+    }
+    private void Update()
+    {
+        
+        if (Input.GetKey(KeyCode.E))
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius);
+            foreach (var hitCollider in hitColliders)
+            {
+                
+                if (hitCollider.CompareTag("Player"))
+                {
+                    addammo.ammo += 15;
+                    gameObject.SetActive(false);
+                    if (!audiotake.isPlaying)
+                    {
+                        audiotake.Play();
+                    }
+
+                }
+            }
+        }
+    }
+    void SpawnObject()
+    {
+        spawnedObject = Instantiate(objectToSpawn, spawnTransform.position, spawnTransform.rotation);
+        spawnedObject.SetActive(false);
+        Invoke("Respawn", spawnInterval);
+
+    }
+    void Respawn()
+    {
+        if (spawnedObject == null)
+        {
+            spawnedObject = Instantiate(objectToSpawn, spawnTransform.position, spawnTransform.rotation);
+            spawnedObject.SetActive(false);
+        }
+        spawnedObject.SetActive(true);
+        Invoke("SpawnObject", spawnInterval);
+    }
+}
+
+
