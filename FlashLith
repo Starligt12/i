@@ -1,0 +1,20 @@
+public class FlashLith : MonoBehaviour
+{
+    public Light FL;
+    
+    
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.F)) 
+        { 
+            if(FL.enabled == false) 
+            { 
+                FL.enabled = true;
+            }
+            else
+            {
+                FL.enabled = false;
+            }
+        }
+    }
+}
