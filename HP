@@ -1,0 +1,56 @@
+public class HP : MonoBehaviour
+{
+    public float spawnInterval = 2.0f;
+    public Transform spawnTransform;
+    private GameObject spawnedObject;
+    public GameObject objectToSpawn;
+    public float radius = 2f;
+    
+    void Start()
+    {
+        spawnedObject = null;
+        SpawnObject();
+        
+    }
+    private void Update()
+    {
+        if (spawnedObject != null && Input.GetKey(KeyCode.E))
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius);
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.CompareTag("Player"))
+                {
+
+                    
+                    //Destroy(spawnedObject);
+                    spawnedObject = null;
+                }
+            }
+        }
+    }
+    void SpawnObject()
+    {
+        spawnedObject = Instantiate(objectToSpawn, spawnTransform.position, spawnTransform.rotation);
+        spawnedObject.SetActive(false);
+        Invoke("Respawn", spawnInterval);
+
+    }
+    void Respawn()
+    {
+        if (spawnedObject == null)
+        {
+            spawnedObject = Instantiate(objectToSpawn, spawnTransform.position, spawnTransform.rotation);
+            spawnedObject.SetActive(false);
+        }
+        else
+        {
+            Destroy(spawnedObject);
+            spawnedObject = Instantiate(objectToSpawn, spawnTransform.position, spawnTransform.rotation);
+            spawnedObject.SetActive(false);
+        }
+        spawnedObject.SetActive(true);
+        Invoke("SpawnObject", spawnInterval);
+    }
+}
+
