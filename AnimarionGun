@@ -1,0 +1,30 @@
+public class AnimationAK : MonoBehaviour
+{
+    Animator WPN;
+
+    void Start()
+    {
+        WPN = GetComponent<Animator>();
+    }
+    void Update() 
+
+    {
+        
+        if (Input.GetKeyDown(KeyCode.W)) 
+        {
+
+            WPN.SetBool("Idle", true);
+            WPN.SetBool("Fire",false);
+
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse0)) 
+        {
+            WPN.SetBool("Fire", true);
+            WPN.SetBool("Idle", false);
+
+        }
+        
+    }
+
+
+}
